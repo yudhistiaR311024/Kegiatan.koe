@@ -1,0 +1,20 @@
+export type UserEntity = {
+  id: string;
+  externalId: string | null;
+  imageUrl: string | null;
+  username: string;
+  email: string;
+  fullName: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  password: string;
+  role: string;
+  deleteSelfEnabled: boolean;
+  createOrganizationEnabled: boolean;
+  createOrganizationsLimit: number | null;
+  hasVerifiedEmailAddress: boolean;
+  hasVerifiedPhoneNumber: boolean;
+  lastSignInAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
