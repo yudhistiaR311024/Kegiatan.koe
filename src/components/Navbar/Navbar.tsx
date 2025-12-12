@@ -4,8 +4,6 @@ import AppLogo from "../Logo";
 import { Button } from "../ui/button";
 import { PanelRightOpen, PanelLeftOpen } from "lucide-react";
 import { useNavbar } from "@/contexts/NavbarContext";
-import OrganizationList from "../OrganizationList";
-import UserProfile from "../UserProfile";
 
 const Navbar = () => {
   const { isOpen, toggle } = useNavbar();
@@ -23,10 +21,7 @@ const Navbar = () => {
         </Button>
         <AppLogo />
       </div>
-      <div className="flex items-center gap-2">
-        <OrganizationList />
-        <UserProfile />
-      </div>
+      <div className="flex items-center gap-2"></div>
     </nav>
   );
 };
