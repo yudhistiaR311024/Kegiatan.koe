@@ -10,6 +10,10 @@ import {
   registerDomainSchema,
 } from "@/core/domain/schmea/register.schema";
 import { UnauthorizedError } from "@/core/domain/errors/AppError";
+import jwt from "jsonwebtoken";
+
+//Ugly
+import { UserEntity } from "@/core/domain/user/entity/user.entity";
 
 export class AuthService {
   constructor(
@@ -17,24 +21,24 @@ export class AuthService {
     private readonly userRepository: IUserRepository
   ) {}
 
-  async login(dto: LoginDomainSchemaType): Promise<void> {
+  async login(dto: LoginDomainSchemaType): Promise<UserEntity | null> {
     const validationDomain = loginDomainSchema.parse(dto);
     const { username, password } = validationDomain;
 
     const user = await this.userRepository.findUsername(username);
 
-    if (user) {
-      const isMatch = bcrypt.compareSync(password, user.password);
+    if (!user) throw new UnauthorizedError();
 
-      if (!isMatch) {
-        throw new UnauthorizedError();
-      }
+    const match = await bcrypt.compare(password, user.password);
 
-      await this.authRepository.login(username);
+    if (!match) {
+      throw new UnauthorizedError();
     }
+
+    return user;
   }
 
-  async register(dto: RegisterDomainSchemaType): Promise<void> {
+  async register(dto: RegisterDomainSchemaType): Promise<UserEntity> {
     const registerDomain = registerDomainSchema.parse(dto);
 
     const syncSald = bcrypt.genSaltSync(10);
@@ -45,6 +49,6 @@ export class AuthService {
       password: hashPassword,
     };
 
-    await this.authRepository.register(registerDto);
+    return await this.authRepository.register(registerDto);
   }
 }

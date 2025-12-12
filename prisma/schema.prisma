@@ -20,14 +20,12 @@ enum USER_ROLE {
 }
 
 model RefreshToken {
-  id        String    @id @default(uuid())
-  token     String    @unique @map("token")
-  user      User      @relation(fields: [userId], references: [id])
-  userId    String    @map("user_id")
-  username  String
-  role      USER_ROLE
-  expiresAt DateTime  @map("expires_at")
-  createdAt DateTime  @default(now())
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id") @unique
+  isBan     Boolean  @default(false)
+  token     String?  @map("token") @db.Text 
+  createdAt DateTime @default(now())
 
   @@map("refresh_tokens")
 }

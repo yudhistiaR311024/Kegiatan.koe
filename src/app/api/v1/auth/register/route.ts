@@ -7,15 +7,24 @@ import {
   registerDto,
 } from "@/core/application/auth/dto/register.dto";
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+//ugly
+import { prisma } from "@/core/infrastructure/databases/prisma/prisma.client";
+
+export async function POST(req: NextRequest) {
   try {
     const dto: RegisterDtoType = await req.json();
 
     const validDTO = registerDto.parse(dto);
 
-    await authService.register(validDTO);
+    const user = await authService.register(validDTO);
 
-    return NextResponse.json({ message: "OK" }, { status: 201 });
+    await prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
+    return NextResponse.json({ message: "Ok" }, { status: 201 });
   } catch (error: any) {
     return handleApiError(error);
   }
