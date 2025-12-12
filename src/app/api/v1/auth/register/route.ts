@@ -3,11 +3,11 @@ import { NextResponse, NextRequest } from "next/server";
 import { authService } from "@/core/di/container";
 
 import {
-  type RegisterDtoType,
+  RegisterDtoType,
   registerDto,
 } from "@/core/application/auth/dto/register.dto";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const dto: RegisterDtoType = await req.json();
 
