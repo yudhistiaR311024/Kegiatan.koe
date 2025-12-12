@@ -7,6 +7,7 @@ import { LoginDtoType, loginDTO } from "@/core/application/auth/dto/login.dto";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/core/infrastructure/databases/prisma/prisma.client";
+import { UnauthorizedError } from "@/core/domain/errors/AppError";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const user = await authService.login(validDTO);
 
-    if (!user) return NextResponse.next();
+    if (!user) throw new UnauthorizedError();
 
     const payload = {
       id: user.id,
