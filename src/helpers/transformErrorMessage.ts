@@ -10,22 +10,24 @@ type ServerErrorItem = {
   inclusive?: boolean;
   path: string[];
   message: string;
-}
+};
 
 type TransformedErrors = {
   [key: string]: string;
-}
+};
 
-export const transformErrorMessage = (errorResponse: unknown): {} => {
-  const errorsObject: TransformedErrors = {}
+export const transformErrorMessage = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  errorResponse: any
+): TransformedErrors => {
+  const errorsObject: TransformedErrors = {};
 
-  if (errorResponse.error) {
-    if (element.path && element.path.length > 0) {
-      errorResponse?.error.forEach(element => {
-        const fieldName = error.path[0];
-
+  if (errorResponse?.error && Array.isArray(errorResponse.error)) {
+    errorResponse.error.forEach((element: ServerErrorItem) => {
+      if (element.path && element.path.length > 0) {
+        const fieldName = element.path[0];
         if (!errorsObject[fieldName]) {
-          errorsObject[fieldName] = error.message;
+          errorsObject[fieldName] = element.message;
         }
       }
     });

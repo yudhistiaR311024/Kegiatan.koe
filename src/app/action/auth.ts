@@ -1,61 +1,70 @@
-'use server'
+"use server";
 
-import { z } from 'zod'
-import { loginDTO } from "@/core/application/auth/dto/login.dto"
-import { registerDto, RegisterDtoType } from '@/core/application/auth/dto/register.dto'
-import { prisma } from "@/core/infrastructure/databases/prisma/prisma.client"
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import jwt from 'jsonwebtoken'
+import { z } from "zod";
+import { loginDTO } from "@/core/application/auth/dto/login.dto";
+import {
+  registerDto,
+  RegisterDtoType,
+} from "@/core/application/auth/dto/register.dto";
+import { prisma } from "@/core/infrastructure/databases/prisma/prisma.client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-export type LoginSate =
+type LoginSate =
   | {
-    error?: {
-      username?: string[],
-      password?: string[]
-    },
-    message?: string
-  }
-  | undefined
+      error?: {
+        username?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
 
-export type RegisterState =
+type RegisterState =
   | {
-    error?: {
-      username?: string[],
-      firtName?: string[],
-      lastName?: string[],
-      email?: string[],
-      password?: string[],
-      confirmPassword?: string[]
-    },
-    message?: string
-  }
-  | undefined
+      error?: {
+        username?: string[];
+        firstName?: string[];
+        lastName?: string[];
+        email?: string[];
+        password?: string[];
+        confirmPassword?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
 
-export async function login(state: LoginSate, formData: FormData) {
+export async function login(
+  state: LoginSate,
+  formData: FormData
+): Promise<LoginSate> {
   const validationfields = loginDTO.safeParse({
-    username: formData.get('username'),
-    password: formData.get('password')
-  })
+    username: formData.get("username") as string,
+    password: formData.get("password") as string,
+  });
 
   if (!validationfields.success) {
     return {
-      error: z.flattenError(validationfields.error).fieldErrors
-    }
+      error: z.flattenError(validationfields.error).fieldErrors,
+    };
   }
 
   const user = await prisma.user.findFirst({
     where: {
-      username: validationfields.data.username
-    }
-  })
+      username: validationfields.data.username,
+    },
+  });
 
-  const message = 'Username atau password tidak valid'
+  const message = "Username atau password tidak valid";
 
-  if (!user) return { message }
-  const match = await bcrypt.compare(validationfields.data.password, user.password);
-  if (!match) return { message }
+  if (!user) return { message };
+  const match = await bcrypt.compare(
+    validationfields.data.password,
+    user.password
+  );
+  if (!match) return { message };
 
   const payload = {
     id: user.id,
@@ -83,43 +92,48 @@ export async function login(state: LoginSate, formData: FormData) {
     maxAge: 60 * 60 * 24 * 7 * 1000,
   });
 
-  redirect('/')
+  redirect("/");
 }
 
-export async function register(state: RegisterState, formData: FormData) {
+export async function register(
+  state: RegisterState,
+  formData: FormData
+): Promise<RegisterState> {
   const validationFields = registerDto.safeParse({
-    username: formData.get('username'),
-    firstName: formData.get('firstName'),
-    lastName: formData.get('lastName'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-    confirmPassword: formData.get('confirmPassword'),
-  })
+    username: formData.get("username") as string,
+    firstName: formData.get("firstName") as string,
+    lastName: formData.get("lastName") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+    confirmPassword: formData.get("confirmPassword") as string,
+  });
 
   if (!validationFields.success) {
     return {
-      error: z.flattenError(validationFields.error).fieldErrors
-    }
+      error: z.flattenError(validationFields.error).fieldErrors,
+    };
   }
 
-
   const syncSald = bcrypt.genSaltSync(10);
-  const hashPassword = bcrypt.hashSync(validationFields.data.password, syncSald);
+  const hashPassword = bcrypt.hashSync(
+    validationFields.data.password,
+    syncSald
+  );
 
   const registerData: RegisterDtoType = {
     ...validationFields.data,
-    password: hashPassword
-  }
+    password: hashPassword,
+  };
 
   const user = await prisma.user.create({
-    data: registerData
-  })
+    data: registerData,
+  });
 
   await prisma.refreshToken.create({
     data: {
-      userId: user.id
-    }
-  })
+      userId: user.id,
+    },
+  });
 
-  return { message: 'Berhasil membuat akun' }
+  return { message: "Berhasil membuat akun" };
 }

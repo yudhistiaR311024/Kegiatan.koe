@@ -49,7 +49,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     return NextResponse.json({ accessToken }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     return handleApiError(error);
   }
 }

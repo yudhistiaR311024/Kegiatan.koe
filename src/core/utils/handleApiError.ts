@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { AppError } from "@/core/domain/errors/AppError";
 import { ZodError } from "zod";
 
-export function handleApiError(error: any): NextResponse {
+export function handleApiError(error: unknown): NextResponse {
   if (error instanceof AppError) {
     return NextResponse.json(
       {
