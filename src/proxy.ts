@@ -1,46 +1,33 @@
-import { headers } from "next/headers";
 import { NextResponse, NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import { decodedRefreshToken } from "./lib/sessions";
 
-const protectedRoutes = ["/api/v1/users"];
-const publicRoutes = ["/login", "/register"];
+const protectedRoutes = ["/dashboard"];
+const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function proxy(req: NextRequest, res: NextResponse) {
-  const authHeader = (await headers()).get("Authorization");
-  const token = authHeader && authHeader.split(" ")[1];
-
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
-  //const isPublicRoute = publicRoutes.includes(path);
+  const isPublicRoute = publicRoutes.includes(path);
 
-  if (isProtectedRoute) {
-    if (!token)
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const refrehToken = (await cookies()).get("refreshToken")?.value;
+  const decodedTokenRefresh = await decodedRefreshToken(refrehToken);
 
-    return jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET!,
-      function (err, decoded) {
-        if (err) {
-          return NextResponse.json(
-            { message: "Unauthorized" },
-            { status: 401 }
-          );
-        }
+  if (isProtectedRoute && !decodedTokenRefresh?.userId!) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
-        return NextResponse.next();
-      }
-    );
+  if (
+    isPublicRoute &&
+    decodedTokenRefresh?.userId &&
+    !req.nextUrl.pathname.startsWith("/dashboard")
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };

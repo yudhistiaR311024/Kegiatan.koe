@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useActionState } from "react";
+import { useState, useActionState } from "react";
 import {
   Card,
   CardHeader,
@@ -15,56 +15,61 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@/components/ui/input-group"
+} from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { User, Lock, Eye, EyeOff } from 'lucide-react'
+import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { login } from "@/app/action/auth";
 
-type LoginData = {
-  username: string,
-  password: string,
-}
-
 const LoginPage = () => {
-  const [stateForm, formAction, pending] = useActionState(login, undefined)
-
-  const [loginData, setLoginData] = useState<LoginData>({
-    username: "",
-    password: "",
-  });
-  const [visibility, setVisibility] = useState<boolean>(false)
+  const [stateForm, formAction, pending] = useActionState(login, undefined);
+  const [visibility, setVisibility] = useState<boolean>(false);
 
   const handleVisibility = () => {
-    setVisibility(!visibility)
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoginData({
-      ...loginData,
-      [e.target.name]: e.target.value,
-    });
+    setVisibility(!visibility);
   };
 
   return (
-    <Card className={`${stateForm?.error || stateForm?.message && "border-red-500"} w-full max-w-sm md:max-w-sm lg:max-w-md`}>
+    <Card
+      className={`${
+        stateForm?.error || (stateForm?.message && "border-red-500")
+      } w-full max-w-sm md:max-w-sm lg:max-w-md`}
+    >
       <form method="POST" action={formAction}>
         <CardHeader>
-          <CardTitle className="font-bold text-md md:text-lg">Senang Melihat Anda Lagi!</CardTitle>
-          <CardDescription className="font-sans text-sm text-zinc-400">Masukkan kredensial Anda di bawah untuk melanjutkan ke dasbor Anda</CardDescription>
+          <CardTitle className="font-bold text-md md:text-lg">
+            Senang Melihat Anda Lagi!
+          </CardTitle>
+          <CardDescription className="font-sans text-sm text-zinc-400">
+            Masukkan kredensial Anda di bawah untuk melanjutkan ke dasbor Anda
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2 my-2">
           <div>
             <InputGroup>
-              <InputGroupInput disabled={pending} onChange={handleChange} id="username" name="username" placeholder="Username" type="text" />
+              <InputGroupInput
+                disabled={pending}
+                id="username"
+                name="username"
+                placeholder="Username"
+                type="text"
+              />
               <InputGroupAddon>
                 <User className={stateForm?.error && "text-red-500"} />
               </InputGroupAddon>
             </InputGroup>
-            <p className="text-red-500 text-sm h-5">{stateForm?.error?.username || stateForm?.message}</p>
+            <p className="text-red-500 text-sm h-5">
+              {stateForm?.error?.username || stateForm?.message}
+            </p>
           </div>
           <div>
             <InputGroup>
-              <InputGroupInput disabled={pending} onChange={handleChange} id="password" name="password" placeholder="password" type={visibility ? "text" : "password"} />
+              <InputGroupInput
+                disabled={pending}
+                id="password"
+                name="password"
+                placeholder="password"
+                type={visibility ? "text" : "password"}
+              />
               <InputGroupAddon>
                 <Lock className={stateForm?.error && "text-red-500"} />
               </InputGroupAddon>
@@ -72,7 +77,9 @@ const LoginPage = () => {
                 {visibility ? <Eye /> : <EyeOff />}
               </InputGroupButton>
             </InputGroup>
-            <p className="text-red-500 text-sm h-5">{stateForm?.error?.username || stateForm?.message}</p>
+            <p className="text-red-500 text-sm h-5">
+              {stateForm?.error?.username || stateForm?.message}
+            </p>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">
@@ -86,10 +93,12 @@ const LoginPage = () => {
               "Login"
             )}
           </Button>
-          <p className="font-sans text-sm text-zinc-400">Kami menjaga keamanan informasi Anda dengan sangat serius.</p>
+          <p className="font-sans text-sm text-zinc-400">
+            Kami menjaga keamanan informasi Anda dengan sangat serius.
+          </p>
         </CardFooter>
-      </form >
-    </Card >
+      </form>
+    </Card>
   );
 };
 
