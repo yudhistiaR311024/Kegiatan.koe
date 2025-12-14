@@ -7,9 +7,8 @@ import {
   RegisterDtoType,
 } from "@/core/application/auth/dto/register.dto";
 import { prisma } from "@/core/infrastructure/databases/prisma/prisma.client";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import jwt from "jsonwebtoken";
+import { clearRefreshToken, createRefreshToken } from "@/lib/sessions";
 import bcrypt from "bcrypt";
 
 type LoginSate =
@@ -22,7 +21,7 @@ type LoginSate =
     }
   | undefined;
 
-type RegisterState =
+export type RegisterState =
   | {
       error?: {
         username?: string[];
@@ -41,8 +40,8 @@ export async function login(
   formData: FormData
 ): Promise<LoginSate> {
   const validationfields = loginDTO.safeParse({
-    username: formData.get("username") as string,
-    password: formData.get("password") as string,
+    username: formData.get("username"),
+    password: formData.get("password"),
   });
 
   if (!validationfields.success) {
@@ -67,32 +66,14 @@ export async function login(
   if (!match) return { message };
 
   const payload = {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    role: user.role,
+    userId: user.id as string,
+    username: user.username as string,
+    email: user.email as string,
+    role: user.role as string,
   };
 
-  const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET!, {
-    expiresIn: "1d",
-  });
-
-  await prisma.refreshToken.update({
-    where: {
-      userId: user.id,
-    },
-    data: {
-      token: refreshToken,
-    },
-  });
-
-  const cookieStore = await cookies();
-  cookieStore.set("refreshToken", refreshToken, {
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7 * 1000,
-  });
-
-  redirect("/");
+  await createRefreshToken(payload);
+  redirect("/dashboard");
 }
 
 export async function register(
@@ -100,12 +81,12 @@ export async function register(
   formData: FormData
 ): Promise<RegisterState> {
   const validationFields = registerDto.safeParse({
-    username: formData.get("username") as string,
-    firstName: formData.get("firstName") as string,
-    lastName: formData.get("lastName") as string,
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    confirmPassword: formData.get("confirmPassword") as string,
+    username: formData.get("username"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
   });
 
   if (!validationFields.success) {
@@ -136,4 +117,9 @@ export async function register(
   });
 
   return { message: "Berhasil membuat akun" };
+}
+
+export async function logout() {
+  await clearRefreshToken();
+  redirect("/");
 }
