@@ -47,7 +47,7 @@ const LoginPage = () => {
 
   return (
     <Card className={`${stateForm?.error || stateForm?.message && "border-red-500"} w-full max-w-sm md:max-w-sm lg:max-w-md`}>
-      <form method="post" action={formAction}>
+      <form method="POST" action={formAction}>
         <CardHeader>
           <CardTitle className="font-bold text-md md:text-lg">Senang Melihat Anda Lagi!</CardTitle>
           <CardDescription className="font-sans text-sm text-zinc-400">Masukkan kredensial Anda di bawah untuk melanjutkan ke dasbor Anda</CardDescription>
