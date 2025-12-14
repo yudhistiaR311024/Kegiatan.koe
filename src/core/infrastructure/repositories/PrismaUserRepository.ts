@@ -5,12 +5,10 @@ import { handlePrismaError } from "../../utils/handlePrismaError";
 import type { User } from "@/generated/prisma/client";
 
 export class PrismaUserRepository implements IUserRepository {
-  constructor(private readonly user: Prisma.UserDelegate) {}
+  constructor(private readonly user: Prisma.UserDelegate) { }
 
   async findUsername(username: string): Promise<User | null> {
-    return handlePrismaError<User>(
-      this.user.findUniqueOrThrow({ where: { username } })
-    );
+    return handlePrismaError(this.user.findFirst({ where: { username } }))
   }
   async create(dto: Prisma.UserCreateInput): Promise<User> {
     return handlePrismaError(this.user.create({ data: dto }));

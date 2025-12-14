@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useActionState } from "react";
 import {
   Card,
   CardHeader,
@@ -8,21 +8,35 @@ import {
   CardContent,
   CardFooter,
   CardTitle,
-  CardAction,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import { Spinner } from "@/components/ui/spinner";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
-import { axiosWithJWT } from "@/lib/axiosInstance";
+import { User, Lock, Eye, EyeOff } from 'lucide-react'
+import { login } from "@/app/action/auth";
+
+type LoginData = {
+  username: string,
+  password: string,
+}
 
 const LoginPage = () => {
-  const [loginData, setLoginData] = useState<object>({
+  const [stateForm, formAction, pending] = useActionState(login, undefined)
+
+  const [loginData, setLoginData] = useState<LoginData>({
     username: "",
     password: "",
   });
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [visibility, setVisibility] = useState<boolean>(false)
+
+  const handleVisibility = () => {
+    setVisibility(!visibility)
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({
@@ -31,72 +45,51 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    return await axiosWithJWT
-      .post("/auth/login", loginData)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   return (
-    <Card className="w-full max-w-sm md:max-w-md lg:max-w-lg">
-      <form onSubmit={handleSubmit}>
+    <Card className={`${stateForm?.error || stateForm?.message && "border-red-500"} w-full max-w-sm md:max-w-sm lg:max-w-md`}>
+      <form method="post" action={formAction}>
         <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>Login to your account</CardDescription>
-          <CardAction>
-            <Link
-              href="/register"
-              className={buttonVariants({ variant: "link", size: "lg" })}
-            >
-              Register
-            </Link>
-          </CardAction>
+          <CardTitle className="font-bold text-md md:text-lg">Senang Melihat Anda Lagi!</CardTitle>
+          <CardDescription className="font-sans text-sm text-zinc-400">Masukkan kredensial Anda di bawah untuk melanjutkan ke dasbor Anda</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-4 mt-4">
-            <div className="flex flex-col gap-2">
-              <Label>Username</Label>
-              <Input
-                onChange={handleChange}
-                name="username"
-                placeholder="Username"
-                type="text"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Password</Label>
-              <Input
-                onChange={handleChange}
-                name="password"
-                placeholder="Password"
-                type="password"
-              />
-            </div>
+        <CardContent className="space-y-2 my-2">
+          <div>
+            <InputGroup>
+              <InputGroupInput disabled={pending} onChange={handleChange} id="username" name="username" placeholder="Username" type="text" />
+              <InputGroupAddon>
+                <User className={stateForm?.error && "text-red-500"} />
+              </InputGroupAddon>
+            </InputGroup>
+            <p className="text-red-500 text-sm h-5">{stateForm?.error?.username || stateForm?.message}</p>
+          </div>
+          <div>
+            <InputGroup>
+              <InputGroupInput disabled={pending} onChange={handleChange} id="password" name="password" placeholder="password" type={visibility ? "text" : "password"} />
+              <InputGroupAddon>
+                <Lock className={stateForm?.error && "text-red-500"} />
+              </InputGroupAddon>
+              <InputGroupButton onClick={handleVisibility}>
+                {visibility ? <Eye /> : <EyeOff />}
+              </InputGroupButton>
+            </InputGroup>
+            <p className="text-red-500 text-sm h-5">{stateForm?.error?.username || stateForm?.message}</p>
           </div>
         </CardContent>
-        <CardFooter className="mt-4">
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? (
+        <CardFooter className="flex flex-col">
+          <Button type="submit" disabled={pending} className="w-full mb-2">
+            {pending ? (
               <>
-                <Spinner /> Processing...
+                <Spinner />
+                Processing...
               </>
             ) : (
               "Login"
             )}
           </Button>
+          <p className="font-sans text-sm text-zinc-400">Kami menjaga keamanan informasi Anda dengan sangat serius.</p>
         </CardFooter>
-      </form>
-    </Card>
+      </form >
+    </Card >
   );
 };
 

@@ -10,7 +10,6 @@ import {
   registerDomainSchema,
 } from "@/core/domain/schmea/register.schema";
 import { UnauthorizedError } from "@/core/domain/errors/AppError";
-import jwt from "jsonwebtoken";
 
 //Ugly
 import { UserEntity } from "@/core/domain/user/entity/user.entity";
@@ -19,7 +18,7 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly userRepository: IUserRepository
-  ) {}
+  ) { }
 
   async login(dto: LoginDomainSchemaType): Promise<UserEntity | null> {
     const validationDomain = loginDomainSchema.parse(dto);
