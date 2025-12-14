@@ -37,9 +37,6 @@ const RegisterPage = () => {
   const handleVisibility = (fieldName: string) => {
     setVisibility((prev) => (prev === fieldName ? null : fieldName));
   };
-  const handleVisibility = (fiieldName: string) => {
-    setVisibility((prev) => (prev === fiieldName ? null : fiieldName));
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRegisterData({
