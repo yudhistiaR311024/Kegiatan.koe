@@ -10,14 +10,7 @@ export class PrismaAuthRepository implements AuthRepository {
     return await handlePrismaError(
       this.user.findFirst({
         where: {
-          OR: [
-            {
-              username: identifier,
-            },
-            {
-              email: identifier,
-            },
-          ],
+          username: identifier,
         },
       })
     );

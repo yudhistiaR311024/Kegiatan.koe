@@ -1,0 +1,32 @@
+GET http://localhost:3000/api/v1/auth/token
+Content-Type: application/application/json
+
+### Login
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "test123",
+    "password": "Test.110"
+}
+
+### Logout
+DELETE http://localhost:3000/api/v1/auth/logout
+
+### Register User
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+	"username" : "test123",
+	"firstName" : "test",
+	"lastName" : "test",
+	"email" : "test@gmail.com",
+	"password" : "Test.110",
+	"confirmPassword": "Test.110"
+}
+
+### Get User
+GET http://localhost:3000/api/v1/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0ZjUyYmY0LWI0NWMtNGViYi1hMWJjLThiOGEwMTBhOWU4ZiIsInVzZXJuYW1lIjoidGVzdDEyMyIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiTUVNQkVSIiwiaWF0IjoxNzY1NTQ0MDI5LCJleHAiOjE3NjU1NDQwNjl9.ZOhGEHuCvnZtGKa4mzEhgXzSsxIlj0fvuqcfC1oUjDg
