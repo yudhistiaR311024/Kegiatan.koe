@@ -1,12 +1,14 @@
-"use client";
-
 import * as React from "react";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "../ui/sidebar";
 import { AppSidebar } from "../Sidebar/Sidebar";
+import { cookies } from "next/headers";
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+const MainLayout = async ({ children }: { children: React.ReactNode }) => {
+  const cookieStore = await cookies();
+  const defaultState = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultState}>
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
