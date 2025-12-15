@@ -14,7 +14,8 @@ export default async function proxy(req: NextRequest, res: NextResponse) {
   const decodedTokenRefresh = await decodedRefreshToken(refrehToken);
 
   if (isProtectedRoute && !decodedTokenRefresh?.userId!) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    //return NextResponse.redirect(new URL("/login", req.url));
+    return true;
   }
 
   if (
@@ -22,7 +23,8 @@ export default async function proxy(req: NextRequest, res: NextResponse) {
     decodedTokenRefresh?.userId &&
     !req.nextUrl.pathname.startsWith("/dashboard")
   ) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    //return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    return true;
   }
 
   return NextResponse.next();

@@ -1,21 +1,24 @@
 "use client";
 
 import * as React from "react";
-import Navbar from "../Navbar/Navbar";
-import Sidebar from "../Navbar/Sidebar";
-import { NavbarProvider } from "@/contexts/NavbarContext";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "../ui/sidebar";
+import { AppSidebar } from "../Sidebar/Sidebar";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <NavbarProvider>
-      <Navbar />
-      <div className="flex">
-        <Sidebar />
-        <main className="container pt-16 mx-auto px-4 md:px-0 mt-2 md:mt-4">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+          </div>
+        </header>
+        <main className="bg-muted/50 min-h-dvh flex-1 rounded-xl md:min-h-min">
           {children}
         </main>
-      </div>
-    </NavbarProvider>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 
