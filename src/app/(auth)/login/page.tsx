@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useActionState } from "react";
+import Link from "next/link";
 import {
   Card,
   CardHeader,
@@ -8,97 +9,55 @@ import {
   CardContent,
   CardFooter,
   CardTitle,
+  CardAction,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import { Spinner } from "@/components/ui/spinner";
-import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { login } from "@/app/action/auth";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import AppLogo from "@/components/Logo";
+import LoginForm from "@/components/form/LoginForm";
 
 const LoginPage = () => {
   const [stateForm, formAction, pending] = useActionState(login, undefined);
-  const [visibility, setVisibility] = useState<boolean>(false);
-
-  const handleVisibility = () => {
-    setVisibility(!visibility);
-  };
 
   return (
     <Card
-      className={`${
-        stateForm?.error || (stateForm?.message && "border-red-500")
-      } w-full max-w-sm md:max-w-sm lg:max-w-md`}
+      className={`${stateForm?.error || (stateForm?.message && "border-red-500")
+        } w-full max-w-sm`}
     >
-      <form method="POST" action={formAction}>
-        <CardHeader>
-          <CardTitle className="font-bold text-md md:text-lg">
-            Senang Melihat Anda Lagi!
-          </CardTitle>
-          <CardDescription className="font-sans text-sm text-zinc-400">
-            Masukkan kredensial Anda di bawah untuk melanjutkan ke dasbor Anda
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 my-2">
-          <div>
-            <InputGroup>
-              <InputGroupInput
-                disabled={pending}
-                id="username"
-                name="username"
-                placeholder="Username"
-                type="text"
-              />
-              <InputGroupAddon>
-                <User className={stateForm?.error && "text-red-500"} />
-              </InputGroupAddon>
-            </InputGroup>
-            <p className="text-red-500 text-sm h-5">
-              {stateForm?.error?.username || stateForm?.message}
-            </p>
-          </div>
-          <div>
-            <InputGroup>
-              <InputGroupInput
-                disabled={pending}
-                id="password"
-                name="password"
-                placeholder="password"
-                type={visibility ? "text" : "password"}
-              />
-              <InputGroupAddon>
-                <Lock className={stateForm?.error && "text-red-500"} />
-              </InputGroupAddon>
-              <InputGroupButton onClick={handleVisibility}>
-                {visibility ? <Eye /> : <EyeOff />}
-              </InputGroupButton>
-            </InputGroup>
-            <p className="text-red-500 text-sm h-5">
-              {stateForm?.error?.username || stateForm?.message}
-            </p>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col">
-          <Button type="submit" disabled={pending} className="w-full mb-2">
-            {pending ? (
-              <>
-                <Spinner />
-                Processing...
-              </>
-            ) : (
-              "Login"
-            )}
-          </Button>
-          <p className="font-sans text-sm text-zinc-400">
-            Kami menjaga keamanan informasi Anda dengan sangat serius.
-          </p>
-        </CardFooter>
-      </form>
-    </Card>
+      <CardHeader>
+        <CardTitle>
+          <AppLogo size='xl' />
+        </CardTitle>
+        <CardDescription className="text-center font-sans text-sm text-zinc-400">
+          Masukkan kredensial Anda di bawah untuk melanjutkan ke dasbor Anda
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <LoginForm state={stateForm} action={formAction} status={pending} />
+      </CardContent>
+      <CardFooter className="flex flex-col gap-2">
+        <Button type="submit" form="login-form" disabled={pending} size="lg" className="w-full font-bold">
+          {pending ? (
+            <>
+              <Spinner />
+              Processing...
+            </>
+          ) : (
+            "LOGIN"
+          )}
+        </Button>
+        <CardAction className="text-center w-full">
+          Belum memiliki akun?{" "}
+          <Link href="/register" className="underline underline-offset-4 hover:text-blue-500">
+            Daftar
+          </Link>
+        </CardAction>
+        <CardDescription className="font-sans text-sm text-zinc-400 text-center">
+          Kami menjaga keamanan informasi Anda dengan sangat serius.
+        </CardDescription>
+      </CardFooter>
+    </Card >
   );
 };
 

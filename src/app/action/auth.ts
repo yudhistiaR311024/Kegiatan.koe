@@ -11,28 +11,28 @@ import { redirect } from "next/navigation";
 import { clearRefreshToken, createRefreshToken } from "@/lib/sessions";
 import bcrypt from "bcrypt";
 
-type LoginSate =
+export type LoginSate =
   | {
-      error?: {
-        username?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
+    error?: {
+      username?: string[];
+      password?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export type RegisterState =
   | {
-      error?: {
-        username?: string[];
-        firstName?: string[];
-        lastName?: string[];
-        email?: string[];
-        password?: string[];
-        confirmPassword?: string[];
-      };
-      message?: string;
-    }
+    error?: {
+      username?: string[];
+      firstName?: string[];
+      lastName?: string[];
+      email?: string[];
+      password?: string[];
+      confirmPassword?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export async function login(
