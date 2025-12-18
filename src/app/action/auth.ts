@@ -31,6 +31,7 @@ export type RegisterState =
       password?: string[];
       confirmPassword?: string[];
     };
+    success: boolean
     message?: string;
   }
   | undefined;
@@ -91,6 +92,7 @@ export async function register(
 
   if (!validationFields.success) {
     return {
+      success: false,
       error: z.flattenError(validationFields.error).fieldErrors,
     };
   }
@@ -116,7 +118,7 @@ export async function register(
     },
   });
 
-  return { message: "Berhasil membuat akun" };
+  return { success: true, message: "Berhasil membuat akun, Silahkan lanjut login" };
 }
 
 export async function logout() {

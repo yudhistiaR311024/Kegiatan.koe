@@ -2,10 +2,11 @@ import { z } from "zod";
 
 export const usernameValidation = z
   .string()
-  .min(3, { message: "Username minimal 3 karakter" })
-  .max(128, { message: "Username maksimal 128 karakter" })
+  .min(1, { message: 'Username harus diisi' })
+  .max(20, { message: "Username maksimal 20 karakter" })
   .regex(/^[a-zA-Z0-9]+$/, {
-    message: "Username hanya boleh alphanumeric (huruf dan angka, tanpa spasi)",
-  });
+    message: "Username hanya boleh huruf dan angka, tanpa spasi",
+  })
+  .trim();
 
 export type UsernameValidationType = z.infer<typeof usernameValidation>;
