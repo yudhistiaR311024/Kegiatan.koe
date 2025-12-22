@@ -12,6 +12,15 @@ type SessionPayload = {
 
 const refreshTokenKey = process.env.REFRESH_TOKEN_SECRET;
 const accessTokenKey = process.env.ACCESS_TOKEN_SECRET;
+
+if (!process.env.REFRESH_TOKEN_SECRET) {
+  throw new Error("REFRESH_TOKEN_SECRET is not defined");
+}
+
+if (!process.env.ACCESS_TOKEN_SECRET) {
+  throw new Error("ACCESS_TOKEN_SECRET is not defined");
+}
+
 const encodedRefreshTokenKey = new TextEncoder().encode(refreshTokenKey);
 const encodedAccessTokenKey = new TextEncoder().encode(accessTokenKey);
 
@@ -58,22 +67,26 @@ export async function createRefreshToken(payload: SessionPayload) {
   const refreshToken = await refreshTokenEncoded(payload);
   const cookieStore = await cookies();
 
-  await prisma.refreshToken.update({
-    where: {
-      userId: payload.userId,
-    },
-    data: {
-      token: refreshToken,
-    },
-  });
+  try {
+    await prisma.refreshToken.update({
+      where: {
+        userId: payload.userId,
+      },
+      data: {
+        token: refreshToken,
+      },
+    });
 
-  cookieStore.set("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    expires: expiresAt,
-    sameSite: "lax",
-    path: "/",
-  });
+    cookieStore.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      expires: expiresAt,
+      sameSite: "lax",
+      path: "/",
+    });
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 export async function createAccessToken(payload: SessionPayload) {
@@ -111,4 +124,12 @@ export async function clearRefreshToken() {
   });
 
   cookiesStore.delete("refreshToken");
+}
+
+export async function getdecodedToken() {
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get("refreshToken")?.value;
+  if (!token) return { message: "token tidak valid" };
+  const decoded = await decodedRefreshToken(token);
+  return decoded
 }

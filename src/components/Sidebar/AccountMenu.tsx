@@ -13,8 +13,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
+import { LogOut } from "lucide-react";
+import { Spinner } from "../ui/spinner";
+import { useActionState } from "react";
+import { logout } from "@/app/action/auth";
+import { getdecodedToken } from "@/lib/sessions";
 
-export const AccountMenu = () => {
+export const AccountMenu = async () => {
+  const [_state, action, pending] = useActionState(logout, undefined)
+  const token = getdecodedToken()
+
+  console.log(token)
+
   return (
     <SidebarFooter>
       <SidebarMenu>
@@ -45,7 +55,17 @@ export const AccountMenu = () => {
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <form action={action} className="w-full">
+                  <button type="submit" className="w-full flex gap-2 items-center" disabled={pending}>
+                    {pending ? <><Spinner /> Processing...</> : (
+                      <>
+                        <LogOut /> Keluar
+                      </>
+                    )}
+                  </button>
+                </form>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
