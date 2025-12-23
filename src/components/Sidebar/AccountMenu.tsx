@@ -1,3 +1,5 @@
+'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -13,8 +15,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
+import { LogOut } from "lucide-react";
+import { Spinner } from "../ui/spinner";
+import { useActionState } from "react";
+import { logout } from "@/app/action/auth";
 
 export const AccountMenu = () => {
+  const [_state, action, pending] = useActionState(logout, undefined)
+
   return (
     <SidebarFooter>
       <SidebarMenu>
@@ -26,8 +34,10 @@ export const AccountMenu = () => {
                 className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
               >
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>SC</AvatarFallback>
+                  <AvatarImage src="https://github.com/yudhistiaR311024.png" />
+                  <AvatarFallback>
+                    <Spinner />
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
@@ -45,7 +55,17 @@ export const AccountMenu = () => {
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <form action={action} className="w-full">
+                  <button type="submit" className="w-full flex gap-2 items-center" disabled={pending}>
+                    {pending ? <><Spinner /> Processing...</> : (
+                      <>
+                        <LogOut /> Keluar
+                      </>
+                    )}
+                  </button>
+                </form>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>

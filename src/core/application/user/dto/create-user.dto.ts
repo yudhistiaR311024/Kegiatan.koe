@@ -46,9 +46,7 @@ export const createUserDto = z.object({
     .default(1),
   hasVerifiedEmailAddress: z.boolean().default(false),
   hasVerifiedPhoneNumber: z.boolean().default(false),
-});
-
-export const registerDto = createUserDto.omit({
+}).omit({
   externalId: true,
   imageUrl: true,
   role: true,
@@ -57,6 +55,9 @@ export const registerDto = createUserDto.omit({
   createOrganizationsLimit: true,
   hasVerifiedEmailAddress: true,
   hasVerifiedPhoneNumber: true,
-});
+}).transform(data => ({
+  ...data,
+  fullName: `${data.firstName} ${data.lastName}`
+}))
 
 export type CreateUserDtoType = z.infer<typeof createUserDto>;

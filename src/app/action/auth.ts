@@ -123,5 +123,5 @@ export async function register(
 
 export async function logout() {
   await clearRefreshToken();
-  redirect("/");
+  redirect("/login");
 }
