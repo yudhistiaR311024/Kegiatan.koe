@@ -28,6 +28,7 @@ export function handleApiError(error: unknown): NextResponse {
     {
       success: false,
       message: "Internal Server Error",
+      errors: error
     },
     { status: 500 }
   );

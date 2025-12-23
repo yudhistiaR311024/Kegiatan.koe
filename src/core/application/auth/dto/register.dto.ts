@@ -19,17 +19,23 @@ export const registerDto = z
       .trim(),
     lastName: z
       .string()
-      .min(1, { message: 'Nama belakang harus diisi' })
+      .min(1, { message: "Nama belakang harus diisi" })
       .max(20, { message: "Nama belakang maksimal 20 karakter" })
-      .trim()
+      .trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password dan konfirmasi password tidak cocok",
     path: ["confirmPassword"],
   })
   .transform((data) => {
-    const { confirmPassword, ...rest } = data;
-    return rest;
+    const { confirmPassword, firstName, lastName, ...rest } = data;
+
+    return {
+      ...rest,
+      firstName,
+      lastName,
+      fullName: `${firstName} ${lastName}`,
+    };
   });
 
 export type RegisterDtoType = z.infer<typeof registerDto>;

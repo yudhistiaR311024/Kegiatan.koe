@@ -1,3 +1,5 @@
+'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -17,13 +19,9 @@ import { LogOut } from "lucide-react";
 import { Spinner } from "../ui/spinner";
 import { useActionState } from "react";
 import { logout } from "@/app/action/auth";
-import { getdecodedToken } from "@/lib/sessions";
 
-export const AccountMenu = async () => {
+export const AccountMenu = () => {
   const [_state, action, pending] = useActionState(logout, undefined)
-  const token = getdecodedToken()
-
-  console.log(token)
 
   return (
     <SidebarFooter>
@@ -36,8 +34,10 @@ export const AccountMenu = async () => {
                 className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
               >
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>SC</AvatarFallback>
+                  <AvatarImage src="https://github.com/yudhistiaR311024.png" />
+                  <AvatarFallback>
+                    <Spinner />
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">

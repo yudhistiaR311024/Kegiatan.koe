@@ -1,14 +1,8 @@
 import bcrypt from "bcrypt";
 import { AuthRepository } from "@/core/domain/auth/repository/auth.repository";
 import { IUserRepository } from "@/core/domain/user/repository/user.repository";
-import {
-  type LoginDomainSchemaType,
-  loginDomainSchema,
-} from "@/core/domain/schmea/login.scema";
-import {
-  type RegisterDomainSchemaType,
-  registerDomainSchema,
-} from "@/core/domain/schmea/register.schema";
+import { type LoginDomainSchemaType, loginDomainSchema } from "@/core/domain/auth/schema/login.schema";
+import { type RegisterDomainSchemaType, registerDomainSchema } from "@/core/domain/auth/schema/register.schema";
 import { UnauthorizedError } from "@/core/domain/errors/AppError";
 
 //Ugly

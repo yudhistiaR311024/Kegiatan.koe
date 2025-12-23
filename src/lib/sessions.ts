@@ -1,4 +1,5 @@
 import "server-only";
+
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { prisma } from "@/core/infrastructure/databases/prisma/prisma.client";
@@ -124,12 +125,4 @@ export async function clearRefreshToken() {
   });
 
   cookiesStore.delete("refreshToken");
-}
-
-export async function getdecodedToken() {
-  const cookiesStore = await cookies();
-  const token = cookiesStore.get("refreshToken")?.value;
-  if (!token) return { message: "token tidak valid" };
-  const decoded = await decodedRefreshToken(token);
-  return decoded
 }
